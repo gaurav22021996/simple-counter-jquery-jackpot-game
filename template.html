@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Example</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+body{text-align:center;}
+h1{padding:30px; margin:0 0 0 30px;}
+#div1,#div2,#div3 {padding:20px 0px;margin-top:0; display:inline-block; text-align:center;}
+</style>
+
+</head>
+<body>
+
+<!-- <h1>Lorem ipsumd dolor sit amet.</h1> -->
+<div id="div1">✪</div> |
+<div id="div2">✪</div> |
+<div id="div3">✪</div>
+<div class="stop">
+<button id="startLoop">Start it Now.</button>
+<button id="stopLoop">Stop it Now.</button>
+
+<div id="status"></div>
+
+</div>
+
+<progress style="display:none;" value="0" max="10" id="progressBar"></progress>
+
+<!-- http://www.sabinanore.com/design/html-special-symbols/ -->
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+ <script type="text/javascript">
+ 	$(document).ready(function() {
+ 
+    var items2 = ["♥", "✪", "✦", "✤", '❂'];
+    /* , "4", "5", "6", "7", "8", "9" */
+        $text1 = $( '#div1' );
+        $text2 = $( '#div2' );
+        $text3 = $( '#div3' );
+        delay = .3; //seconds
+
+    class slot
+    {
+      constructor(){
+        // console.log("started");
+      }
+      countdown(seconds, elementID)
+      {
+        var current = this; 
+        var timeleft = seconds;
+        var downloadTimer = setInterval(function(){
+          document.getElementById(elementID).value = 10 - --timeleft;
+          if(timeleft <= 0)
+          {
+            clearInterval(downloadTimer);
+            current.timeout()
+          }
+        },1000);
+      }
+      wheel (items, $text, delay) {
+        var current = this; 
+        $.each( items, function ( i, elm ){
+            $text.delay( delay*1E3).hide();
+            $text.queue(function(){
+                var probablity = Math.floor(Math.random() * items.length)+ 0 ;
+                $text.html( items[probablity]);
+            //    console.log(items.length+" "+probablity+items[probablity])
+                $text.dequeue();
+            });
+            $text.show();
+            $text.queue(function(){
+                if ( i == items.length -1 ) {
+                    current.wheel(items, $text, delay);   
+                }
+                $text.dequeue();
+            });
+        });
+      }
+      timeout()
+      {
+        $text1.stop(true, false);
+        $text2.stop(true, false);
+        $text3.stop(true, false);
+      }
+      result(wheel1, wheel2, wheel3)
+      {
+        if(wheel1.text()==wheel2.text() && wheel2.text()==wheel3.text())
+        {$("#status").html("Success"); this.award();}
+        else
+        console.log("You missed !");
+      }
+      award()
+      {
+        console.log("2 coins");
+      }
+
+    }
+ 
+
+    var slotMach = new slot();
+
+		
+    $("#stopLoop").on("click", function() {
+    	$text1.stop(true, false);
+      $text2.stop(true, false);
+      $text3.stop(true, false);
+      $("#progressBar").hide();
+      slotMach.result($text1, $text2, $text3);
+    })
+    $("#startLoop").on("click", function() {
+	    	/* items2.sort(function() {
+	    	          return .5 - Math.random();
+	    	        }); */
+        // $("#progressBar").show();
+        slotMach.countdown(10, "progressBar");
+	    	slotMach.wheel(items2, $text1, delay);  
+	      slotMach.wheel(items2, $text2, delay);
+	      slotMach.wheel(items2, $text3, delay);
+	    })
+	});
+ </script>
+ 
+</body>
+</html>
